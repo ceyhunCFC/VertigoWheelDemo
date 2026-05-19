@@ -389,6 +389,7 @@ GameObject:
   m_Component:
   - component: {fileID: 191620221}
   - component: {fileID: 191620222}
+  - component: {fileID: 191620223}
   m_Layer: 5
   m_Name: ui_group_wheel
   m_TagString: Untagged
@@ -436,6 +437,22 @@ MonoBehaviour:
   spinDuration: 3
   minFullTurns: 4
   maxFullTurns: 7
+--- !u!114 &191620223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 191620220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5eac5007fd5da450b99a2bbead704094, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheelBaseImage: {fileID: 2009308398}
+  bronzeWheelSprite: {fileID: 21300000, guid: 4e04ed1dc8690485889eff4f2b1ff48b, type: 3}
+  silverWheelSprite: {fileID: 21300000, guid: e8bf01b0c130b40f087fc07228b16165, type: 3}
+  goldenWheelSprite: {fileID: 21300000, guid: 63fbf31e22fe04a2fa48880e70c2bb93, type: 3}
 --- !u!1 &244574443
 GameObject:
   m_ObjectHideFlags: 0

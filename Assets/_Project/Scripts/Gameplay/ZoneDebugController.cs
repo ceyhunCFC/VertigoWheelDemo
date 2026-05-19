@@ -7,6 +7,7 @@ namespace VertigoWheel.Gameplay
     {
         [Header("References")]
         [SerializeField] private ZoneHudView zoneHudView;
+        [SerializeField] private WheelSkinView wheelSkinView;
 
         [Header("Zone Settings")]
         [SerializeField] private int currentZone = 1;
@@ -43,6 +44,11 @@ namespace VertigoWheel.Gameplay
                 zoneHudView = GetComponent<ZoneHudView>();
             }
 
+            if (wheelSkinView == null)
+            {
+                wheelSkinView = GetComponentInChildren<WheelSkinView>(true);
+            }
+
             currentZone = Mathf.Max(1, currentZone);
             safeZoneInterval = Mathf.Max(1, safeZoneInterval);
             superZoneInterval = Mathf.Max(1, superZoneInterval);
@@ -50,14 +56,24 @@ namespace VertigoWheel.Gameplay
 
         private void Refresh()
         {
-            if (zoneHudView == null)
+            if (zoneService == null)
             {
-                return;
+                zoneService = new ZoneService(safeZoneInterval, superZoneInterval);
             }
 
-            zoneHudView.SetCurrentZone(currentZone);
-            zoneHudView.SetNextSafeZone(zoneService.GetNextSafeZone(currentZone));
-            zoneHudView.SetNextSuperZone(zoneService.GetNextSuperZone(currentZone));
+            ZoneType zoneType = zoneService.GetZoneType(currentZone);
+
+            if (zoneHudView != null)
+            {
+                zoneHudView.SetCurrentZone(currentZone);
+                zoneHudView.SetNextSafeZone(zoneService.GetNextSafeZone(currentZone));
+                zoneHudView.SetNextSuperZone(zoneService.GetNextSuperZone(currentZone));
+            }
+
+            if (wheelSkinView != null)
+            {
+                wheelSkinView.SetZoneType(zoneType);
+            }
         }
     }
 }
