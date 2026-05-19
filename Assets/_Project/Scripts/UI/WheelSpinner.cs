@@ -21,6 +21,7 @@ namespace VertigoWheel.UI
 
         public bool IsSpinning => isSpinning;
 
+        public event Action SpinStarted;
         public event Action<int> SpinCompleted;
 
         private void Awake()
@@ -78,7 +79,8 @@ namespace VertigoWheel.UI
 
             isSpinning = true;
             spinButton.interactable = false;
-
+            SpinStarted?.Invoke();
+            
             selectedSlotIndex = Mathf.Clamp(selectedSlotIndex, 0, slotCount - 1);
 
             float anglePerSlot = 360f / slotCount;

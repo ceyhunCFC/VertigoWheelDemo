@@ -1986,6 +1986,7 @@ GameObject:
   - component: {fileID: 716347852}
   - component: {fileID: 716347854}
   - component: {fileID: 716347853}
+  - component: {fileID: 716347855}
   m_Layer: 5
   m_Name: UI_GameRoot
   m_TagString: Untagged
@@ -2034,6 +2035,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneHudView: {fileID: 716347854}
+  wheelSkinView: {fileID: 191620223}
   currentZone: 1
   safeZoneInterval: 5
   superZoneInterval: 30
@@ -2052,6 +2054,19 @@ MonoBehaviour:
   currentZoneText: {fileID: 1255412249}
   safeZoneCounterText: {fileID: 244574445}
   superZoneCounterText: {fileID: 1047680844}
+--- !u!114 &716347855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 716347851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f072e00046ec64c929736e01ad59ed86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  exitButton: {fileID: 1958469691}
 --- !u!1 &796255542
 GameObject:
   m_ObjectHideFlags: 0
