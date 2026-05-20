@@ -11,6 +11,7 @@ namespace VertigoWheel.Gameplay
         [SerializeField, HideInInspector] private WheelSkinView wheelSkinView;
         [SerializeField, HideInInspector] private ExitButtonView exitButtonView;
         [SerializeField, HideInInspector] private RewardPanelView rewardPanelView;
+        [SerializeField, HideInInspector] private GameOverPanelView gameOverPanelView;
         [SerializeField, HideInInspector] private WheelSpinner wheelSpinner;
         [SerializeField, HideInInspector] private ZoneBarView zoneBarView;
 
@@ -32,6 +33,12 @@ namespace VertigoWheel.Gameplay
                 wheelSpinner.SpinCompleted += OnSpinCompleted;
             }
 
+            if (gameOverPanelView != null)
+            {
+                gameOverPanelView.GiveUpClicked += RestartGame;
+                gameOverPanelView.ReviveClicked += ContinueAfterRevive;
+            }
+
             Refresh();
         }
 
@@ -41,6 +48,12 @@ namespace VertigoWheel.Gameplay
             {
                 wheelSpinner.SpinStarted -= Refresh;
                 wheelSpinner.SpinCompleted -= OnSpinCompleted;
+            }
+
+            if (gameOverPanelView != null)
+            {
+                gameOverPanelView.GiveUpClicked -= RestartGame;
+                gameOverPanelView.ReviveClicked -= ContinueAfterRevive;
             }
         }
 
@@ -75,6 +88,16 @@ namespace VertigoWheel.Gameplay
             if (rewardPanelView == null)
             {
                 rewardPanelView = GetComponentInChildren<RewardPanelView>(true);
+            }
+
+            if (gameOverPanelView == null)
+            {
+                gameOverPanelView = GetComponentInChildren<GameOverPanelView>(true);
+            }
+
+            if (gameOverPanelView == null)
+            {
+                gameOverPanelView = FindObjectOfType<GameOverPanelView>(true);
             }
 
             if (wheelSpinner == null)
@@ -123,16 +146,29 @@ namespace VertigoWheel.Gameplay
         private void OnSpinCompleted(WheelSpinResult spinResult)
         {
             WheelSlotData slotData = spinResult.SlotData;
-            if (slotData != null && slotData.Reward != null && slotData.Reward.RewardType == RewardType.Death)
+            if (IsDeathReward(slotData))
             {
-                Debug.Log("[ZoneDebugController] Death selected. Game over.");
+                Debug.Log($"[ZoneDebugController] Death selected: {slotData.Reward.DisplayName}. Game over.");
                 rewardInventory.Clear();
                 if (rewardPanelView != null)
                 {
                     rewardPanelView.Clear();
                 }
 
-                // TODO: game over flow
+                if (gameOverPanelView == null)
+                {
+                    AutoWire();
+                }
+
+                if (gameOverPanelView != null)
+                {
+                    gameOverPanelView.Show();
+                }
+                else
+                {
+                    Debug.LogError("[ZoneDebugController] GameOverPanelView not found in scene.", this);
+                }
+
                 return;
             }
 
@@ -158,6 +194,55 @@ namespace VertigoWheel.Gameplay
         private ZoneService CreateZoneService()
         {
             return new ZoneService(zoneConfig);
+        }
+
+        private bool IsDeathReward(WheelSlotData slotData)
+        {
+            if (slotData == null || slotData.Reward == null)
+            {
+                return false;
+            }
+
+            if (slotData.Reward.RewardType == RewardType.Death)
+            {
+                return true;
+            }
+
+            string rewardName = $"{slotData.Reward.RewardId} {slotData.Reward.DisplayName} {slotData.Reward.name}".ToLowerInvariant();
+            return rewardName.Contains("death") || rewardName.Contains("bomb");
+        }
+
+        private void RestartGame()
+        {
+            rewardInventory.Clear();
+
+            if (rewardPanelView != null)
+            {
+                rewardPanelView.Clear();
+            }
+
+            if (gameOverPanelView != null)
+            {
+                gameOverPanelView.Hide();
+            }
+
+            currentZone = 1;
+            if (zoneBarView != null)
+            {
+                zoneBarView.SetStartZone(currentZone);
+            }
+
+            Refresh();
+        }
+
+        private void ContinueAfterRevive()
+        {
+            if (gameOverPanelView != null)
+            {
+                gameOverPanelView.Hide();
+            }
+
+            Refresh();
         }
     }
 }
