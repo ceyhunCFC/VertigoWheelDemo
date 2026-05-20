@@ -56,6 +56,10 @@ Temel sorumluluklar:
 
 DOTween, `Assets/Plugins/Demigiant/DOTween` altında dahil edilmiştir.
 
+## Araçlar
+
+- Git versiyon kontrolü [Sourcetree] kullanılmıştır.
+
 ## Nasıl Çalıştırılır
 
 1. Depoyu klonlayın.
