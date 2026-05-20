@@ -35,6 +35,11 @@ namespace VertigoWheel.UI
             }
         }
 
+        public void SetVisible(bool isVisible)
+        {
+            gameObject.SetActive(isVisible);
+        }
+
         private Button FindButton(string objectName)
         {
             Button[] buttons = GetComponentsInChildren<Button>(true);

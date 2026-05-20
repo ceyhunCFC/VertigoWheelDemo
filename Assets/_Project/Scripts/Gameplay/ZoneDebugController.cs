@@ -149,10 +149,9 @@ namespace VertigoWheel.Gameplay
             if (IsDeathReward(slotData))
             {
                 Debug.Log($"[ZoneDebugController] Death selected: {slotData.Reward.DisplayName}. Game over.");
-                rewardInventory.Clear();
-                if (rewardPanelView != null)
+                if (exitButtonView != null)
                 {
-                    rewardPanelView.Clear();
+                    exitButtonView.SetVisible(false);
                 }
 
                 if (gameOverPanelView == null)
@@ -226,6 +225,11 @@ namespace VertigoWheel.Gameplay
                 gameOverPanelView.Hide();
             }
 
+            if (exitButtonView != null)
+            {
+                exitButtonView.SetVisible(true);
+            }
+
             currentZone = 1;
             if (zoneBarView != null)
             {
@@ -240,6 +244,11 @@ namespace VertigoWheel.Gameplay
             if (gameOverPanelView != null)
             {
                 gameOverPanelView.Hide();
+            }
+
+            if (exitButtonView != null)
+            {
+                exitButtonView.SetVisible(true);
             }
 
             Refresh();
