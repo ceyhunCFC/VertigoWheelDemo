@@ -8,8 +8,8 @@ namespace VertigoWheel.UI
     public class WheelSpinner : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private RectTransform wheelRotator;
-        [SerializeField] private Button spinButton;
+        [SerializeField, HideInInspector] private RectTransform wheelRotator;
+        [SerializeField, HideInInspector] private Button spinButton;
 
         [Header("Spin Settings")]
         [SerializeField] private int slotCount = 8;

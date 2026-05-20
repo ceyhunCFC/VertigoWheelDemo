@@ -6,11 +6,11 @@ namespace VertigoWheel.UI
     public class ZoneHudView : MonoBehaviour
     {
         [Header("Zone Bar")]
-        [SerializeField] private TMP_Text currentZoneText;
+        [SerializeField, HideInInspector] private TMP_Text currentZoneText;
 
         [Header("Counters")]
-        [SerializeField] private TMP_Text safeZoneCounterText;
-        [SerializeField] private TMP_Text superZoneCounterText;
+        [SerializeField, HideInInspector] private TMP_Text safeZoneCounterText;
+        [SerializeField, HideInInspector] private TMP_Text superZoneCounterText;
 
         private void OnValidate()
         {

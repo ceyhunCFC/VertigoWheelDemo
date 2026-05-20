@@ -6,7 +6,7 @@ namespace VertigoWheel.UI
     public class ExitButtonView : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private Button exitButton;
+        [SerializeField, HideInInspector] private Button exitButton;
 
         private void OnValidate()
         {
@@ -16,6 +16,11 @@ namespace VertigoWheel.UI
         [ContextMenu("Auto Wire")]
         private void AutoWire()
         {
+            if (exitButton == null)
+            {
+                exitButton = GetComponent<Button>();
+            }
+
             if (exitButton == null)
             {
                 exitButton = FindButton("ui_button_exit");

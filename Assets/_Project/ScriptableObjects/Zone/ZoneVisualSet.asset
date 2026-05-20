@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6671f7711a9c14912a7a9dd6977cd1c5, type: 3}
+  m_Name: ZoneVisualSet
+  m_EditorClassIdentifier: 
+  normalZoneVisual: {fileID: 11400000, guid: 2b84df00116c3445aa077edca6afeb39, type: 2}
+  safeZoneVisual: {fileID: 11400000, guid: 6a548325d8c334849a7369dd70ad0897, type: 2}
+  superZoneVisual: {fileID: 11400000, guid: 0a9a83bff3b40416591b9f6c4f8795b3, type: 2}

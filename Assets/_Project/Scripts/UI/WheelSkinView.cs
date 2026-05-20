@@ -7,7 +7,7 @@ namespace VertigoWheel.UI
     public class WheelSkinView : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private Image wheelBaseImage;
+        [SerializeField, HideInInspector] private Image wheelBaseImage;
 
         [Header("Wheel Sprites")]
         [SerializeField] private Sprite bronzeWheelSprite;

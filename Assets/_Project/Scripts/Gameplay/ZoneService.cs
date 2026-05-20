@@ -7,6 +7,13 @@ namespace VertigoWheel.Gameplay
         private readonly int safeZoneInterval;
         private readonly int superZoneInterval;
 
+        public ZoneService(ZoneConfigSO config)
+            : this(
+                config != null ? config.SafeZoneInterval : 5,
+                config != null ? config.SuperZoneInterval : 30)
+        {
+        }
+
         public ZoneService(int safeZoneInterval, int superZoneInterval)
         {
             this.safeZoneInterval = Mathf.Max(1, safeZoneInterval);

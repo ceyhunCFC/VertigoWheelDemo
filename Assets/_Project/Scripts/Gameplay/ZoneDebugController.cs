@@ -6,22 +6,22 @@ namespace VertigoWheel.Gameplay
     public class ZoneDebugController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private ZoneHudView zoneHudView;
-        [SerializeField] private WheelSkinView wheelSkinView;
-        [SerializeField] private ExitButtonView exitButtonView;
-        [SerializeField] private WheelSpinner wheelSpinner;
+        [SerializeField, HideInInspector] private ZoneHudView zoneHudView;
+        [SerializeField, HideInInspector] private WheelSkinView wheelSkinView;
+        [SerializeField, HideInInspector] private ExitButtonView exitButtonView;
+        [SerializeField, HideInInspector] private WheelSpinner wheelSpinner;
+        [SerializeField, HideInInspector] private ZoneBarView zoneBarView;
 
         [Header("Zone Settings")]
+        [SerializeField] private ZoneConfigSO zoneConfig;
         [SerializeField] private int currentZone = 1;
-        [SerializeField] private int safeZoneInterval = 5;
-        [SerializeField] private int superZoneInterval = 30;
-
 
         private ZoneService zoneService;
 
         private void Awake()
         {
-            zoneService = new ZoneService(safeZoneInterval, superZoneInterval);
+            AutoWire();
+            zoneService = CreateZoneService();
 
             if (wheelSpinner != null)
             {
@@ -41,22 +41,13 @@ namespace VertigoWheel.Gameplay
             }
         }
 
-        private void Update()
+        private void OnValidate()
         {
-            if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                currentZone++;
-                Refresh();
-            }
-
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                currentZone = Mathf.Max(1, currentZone - 1);
-                Refresh();
-            }
+            AutoWire();
+            currentZone = Mathf.Max(1, currentZone);
         }
 
-        private void OnValidate()
+        private void AutoWire()
         {
             if (zoneHudView == null)
             {
@@ -70,7 +61,7 @@ namespace VertigoWheel.Gameplay
 
             if (exitButtonView == null)
             {
-                exitButtonView = GetComponent<ExitButtonView>();
+                exitButtonView = GetComponentInChildren<ExitButtonView>(true);
             }
 
             if (wheelSpinner == null)
@@ -78,16 +69,17 @@ namespace VertigoWheel.Gameplay
                 wheelSpinner = GetComponentInChildren<WheelSpinner>(true);
             }
 
-            currentZone = Mathf.Max(1, currentZone);
-            safeZoneInterval = Mathf.Max(1, safeZoneInterval);
-            superZoneInterval = Mathf.Max(1, superZoneInterval);
+            if (zoneBarView == null)
+            {
+                zoneBarView = GetComponentInChildren<ZoneBarView>(true);
+            }
         }
 
         private void Refresh()
         {
             if (zoneService == null)
             {
-                zoneService = new ZoneService(safeZoneInterval, superZoneInterval);
+                zoneService = CreateZoneService();
             }
 
             ZoneType zoneType = zoneService.GetZoneType(currentZone);
@@ -114,7 +106,19 @@ namespace VertigoWheel.Gameplay
 
         private void OnSpinCompleted(int selectedSlotIndex)
         {
+            currentZone++;
+
+            if (zoneBarView != null)
+            {
+                zoneBarView.Advance();
+            }
+
             Refresh();
+        }
+
+        private ZoneService CreateZoneService()
+        {
+            return new ZoneService(zoneConfig);
         }
     }
 }
