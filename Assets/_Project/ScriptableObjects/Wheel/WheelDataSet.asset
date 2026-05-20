@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37aa824cad9bb42e8b56719c3d08e8f2, type: 3}
+  m_Name: WheelDataSet
+  m_EditorClassIdentifier: 
+  bronzeWheel: {fileID: 11400000, guid: 41a0f526a82847bb8de82d421b7acc50, type: 2}
+  silverWheel: {fileID: 11400000, guid: da7e0c5ea66c4c07b2855ec23054fef7, type: 2}
+  goldenWheel: {fileID: 11400000, guid: 5e5868a7a18842ba9576ca1e664b0f87, type: 2}
