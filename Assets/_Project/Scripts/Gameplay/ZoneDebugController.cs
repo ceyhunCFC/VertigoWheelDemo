@@ -32,6 +32,8 @@ namespace VertigoWheel.Gameplay
         private readonly RewardInventory rewardInventory = new RewardInventory();
         private Sequence wheelTransitionSequence;
         private bool isWheelTransitioning;
+        private bool hasWheelHomePosition;
+        private Vector2 wheelHomePosition;
 
         private void Awake()
         {
@@ -119,6 +121,8 @@ namespace VertigoWheel.Gameplay
             {
                 wheelContainer = wheelView.transform as RectTransform;
             }
+
+            CacheWheelHomePosition();
 
             if (exitButtonView == null)
             {
@@ -287,6 +291,7 @@ namespace VertigoWheel.Gameplay
 
         private void RestartGame()
         {
+            ResetWheelTransitionState();
             rewardInventory.Clear();
 
             if (rewardPanelView != null)
@@ -316,10 +321,13 @@ namespace VertigoWheel.Gameplay
 
             if (wheelSpinner != null)
             {
+                wheelSpinner.ResetWheelRotation();
                 wheelSpinner.SetInputEnabled(true);
             }
 
             currentZone = 1;
+            ApplyWheelZoneReset(ZoneType.Normal);
+
             if (zoneBarView != null)
             {
                 zoneBarView.SetStartZone(currentZone);
@@ -333,6 +341,18 @@ namespace VertigoWheel.Gameplay
             if (wheelView != null)
             {
                 wheelView.SetZoneType(zoneType);
+            }
+            else if (wheelSkinView != null)
+            {
+                wheelSkinView.SetZoneType(zoneType);
+            }
+        }
+
+        private void ApplyWheelZoneReset(ZoneType zoneType)
+        {
+            if (wheelView != null)
+            {
+                wheelView.ResetZoneType(zoneType);
             }
             else if (wheelSkinView != null)
             {
@@ -360,6 +380,7 @@ namespace VertigoWheel.Gameplay
                 return;
             }
 
+            CacheWheelHomePosition();
             wheelTransitionSequence?.Kill();
             isWheelTransitioning = true;
             if (wheelSpinner != null)
@@ -370,7 +391,7 @@ namespace VertigoWheel.Gameplay
             ApplyHud();
             ApplyExitButton(nextZoneType);
 
-            Vector2 originalPosition = wheelContainer.anchoredPosition;
+            Vector2 originalPosition = hasWheelHomePosition ? wheelHomePosition : wheelContainer.anchoredPosition;
             Vector2 exitPosition = originalPosition + Vector2.down * wheelTransitionDistance;
             Vector2 enterPosition = originalPosition + Vector2.down * wheelTransitionDistance;
 
@@ -398,6 +419,36 @@ namespace VertigoWheel.Gameplay
 
                 Refresh();
             });
+        }
+
+        private void CacheWheelHomePosition()
+        {
+            if (hasWheelHomePosition || wheelContainer == null)
+            {
+                return;
+            }
+
+            wheelHomePosition = wheelContainer.anchoredPosition;
+            hasWheelHomePosition = true;
+        }
+
+        private void ResetWheelTransitionState()
+        {
+            wheelTransitionSequence?.Kill();
+            wheelTransitionSequence = null;
+            isWheelTransitioning = false;
+
+            if (wheelContainer == null)
+            {
+                AutoWire();
+            }
+
+            if (wheelContainer != null)
+            {
+                CacheWheelHomePosition();
+                wheelContainer.DOKill();
+                wheelContainer.anchoredPosition = hasWheelHomePosition ? wheelHomePosition : Vector2.zero;
+            }
         }
 
         private void ShowExitConfirmPanel()

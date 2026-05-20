@@ -27,6 +27,13 @@ namespace VertigoWheel.UI
             SetWheelData(wheelDataSet.GetWheelData(zoneType));
         }
 
+        public void ResetZoneType(ZoneType zoneType)
+        {
+            if (wheelDataSet == null) return;
+            currentWheelData = null;
+            SetWheelData(wheelDataSet.GetWheelData(zoneType));
+        }
+
         public int SlotCount => activeSlots != null ? activeSlots.Length : 0;
 
         public bool TryGetSlotData(int slotIndex, out WheelSlotData slotData)

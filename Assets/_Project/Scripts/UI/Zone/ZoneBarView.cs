@@ -96,6 +96,10 @@ namespace VertigoWheel.UI
         public void SetStartZone(int zone)
         {
             startZone = Mathf.Max(1, zone);
+            _isAnimating = false;
+            KillItemTweens();
+            RefreshItemStep();
+            LayoutItems();
 
             if (_zoneService == null)
             {
