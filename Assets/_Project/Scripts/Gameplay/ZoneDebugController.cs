@@ -12,6 +12,7 @@ namespace VertigoWheel.Gameplay
         [SerializeField, HideInInspector] private ExitButtonView exitButtonView;
         [SerializeField, HideInInspector] private ExitConfirmPanelView exitConfirmPanelView;
         [SerializeField, HideInInspector] private RewardPanelView rewardPanelView;
+        [SerializeField, HideInInspector] private CollectRewardsPanelView collectRewardsPanelView;
         [SerializeField, HideInInspector] private GameOverPanelView gameOverPanelView;
         [SerializeField, HideInInspector] private WheelSpinner wheelSpinner;
         [SerializeField, HideInInspector] private ZoneBarView zoneBarView;
@@ -121,6 +122,16 @@ namespace VertigoWheel.Gameplay
             if (rewardPanelView == null)
             {
                 rewardPanelView = GetComponentInChildren<RewardPanelView>(true);
+            }
+
+            if (collectRewardsPanelView == null)
+            {
+                collectRewardsPanelView = GetComponentInChildren<CollectRewardsPanelView>(true);
+            }
+
+            if (collectRewardsPanelView == null)
+            {
+                collectRewardsPanelView = FindObjectOfType<CollectRewardsPanelView>(true);
             }
 
             if (gameOverPanelView == null)
@@ -263,6 +274,11 @@ namespace VertigoWheel.Gameplay
                 exitConfirmPanelView.Hide();
             }
 
+            if (collectRewardsPanelView != null)
+            {
+                collectRewardsPanelView.Hide();
+            }
+
             if (exitButtonView != null)
             {
                 exitButtonView.SetVisible(true);
@@ -313,6 +329,23 @@ namespace VertigoWheel.Gameplay
 
         private void CollectRewardsAndRestart()
         {
+            if (exitConfirmPanelView != null)
+            {
+                exitConfirmPanelView.Hide();
+            }
+
+            if (collectRewardsPanelView == null)
+            {
+                AutoWire();
+            }
+
+            var rewardStacks = rewardInventory.Stacks;
+            if (collectRewardsPanelView != null && rewardStacks.Count > 0)
+            {
+                collectRewardsPanelView.Show(rewardStacks, RestartGame);
+                return;
+            }
+
             RestartGame();
         }
 

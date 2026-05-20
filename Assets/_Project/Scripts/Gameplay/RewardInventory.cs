@@ -5,6 +5,9 @@ namespace VertigoWheel.Gameplay
     public class RewardInventory
     {
         private readonly Dictionary<string, RewardStack> rewardStacks = new Dictionary<string, RewardStack>();
+        private readonly List<RewardStack> rewardOrder = new List<RewardStack>();
+
+        public IReadOnlyList<RewardStack> Stacks => new List<RewardStack>(rewardOrder);
 
         public RewardStack AddReward(RewardDataSO reward, int amount, out int previousAmount)
         {
@@ -19,6 +22,7 @@ namespace VertigoWheel.Gameplay
             {
                 stack = new RewardStack(reward, 0);
                 rewardStacks.Add(rewardKey, stack);
+                rewardOrder.Add(stack);
             }
 
             previousAmount = stack.Add(amount);
@@ -28,6 +32,7 @@ namespace VertigoWheel.Gameplay
         public void Clear()
         {
             rewardStacks.Clear();
+            rewardOrder.Clear();
         }
     }
 }
