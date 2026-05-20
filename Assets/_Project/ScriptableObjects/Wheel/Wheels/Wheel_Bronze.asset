@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   zoneType: 0
   wheelSprite: {fileID: 21300000, guid: 4e04ed1dc8690485889eff4f2b1ff48b, type: 3}
+  indicatorSprite: {fileID: 21300000, guid: 90770de816b4c43798d19dc740ec33a4, type: 3}
   slots:
   - reward: {fileID: 11400000, guid: 27b35429fe95a46a5bc7b91263826c02, type: 2}
     amount: 1

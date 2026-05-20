@@ -7,10 +7,12 @@ namespace VertigoWheel.Gameplay
     {
         [SerializeField] private ZoneType zoneType;
         [SerializeField] private Sprite wheelSprite;
+        [SerializeField] private Sprite indicatorSprite;
         [SerializeField] private WheelSlotData[] slots = new WheelSlotData[8];
 
         public ZoneType ZoneType => zoneType;
         public Sprite WheelSprite => wheelSprite;
+        public Sprite IndicatorSprite => indicatorSprite;
         public int SlotCount => slots != null ? slots.Length : 0;
 
         public WheelSlotData GetSlot(int index)

@@ -11,6 +11,7 @@ namespace VertigoWheel.UI
 
         [Header("References")]
         [SerializeField] private Image wheelBaseImage;
+        [SerializeField, HideInInspector] private Image resultIndicatorImage;
         [SerializeField] private WheelSlotView[] slotViews;
 
         private WheelDataSO currentWheelData;
@@ -122,6 +123,14 @@ namespace VertigoWheel.UI
                 wheelBaseImage.raycastTarget = false;
             }
 
+            if (resultIndicatorImage != null)
+            {
+                resultIndicatorImage.sprite = currentWheelData.IndicatorSprite;
+                resultIndicatorImage.preserveAspect = true;
+                resultIndicatorImage.raycastTarget = false;
+                resultIndicatorImage.enabled = currentWheelData.IndicatorSprite != null;
+            }
+
             int count = currentWheelData.SlotCount;
             activeSlots = new WheelSlotData[count];
             for (int i = 0; i < count; i++)
@@ -149,6 +158,11 @@ namespace VertigoWheel.UI
             if (wheelBaseImage == null)
             {
                 wheelBaseImage = FindImage("ui_image_spin_base");
+            }
+
+            if (resultIndicatorImage == null)
+            {
+                resultIndicatorImage = FindImage("ui_image_spin_indicator");
             }
 
             Transform rewardRoot = transform.Find("ui_group_wheel_rewards");

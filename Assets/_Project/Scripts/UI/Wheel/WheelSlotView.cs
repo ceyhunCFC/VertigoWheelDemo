@@ -12,6 +12,11 @@ namespace VertigoWheel.UI
 
         public RectTransform RewardIconTransform => rewardIconImage != null ? rewardIconImage.rectTransform : null;
 
+        private void Awake()
+        {
+            AutoWire();
+        }
+
         private void OnValidate()
         {
             AutoWire();
