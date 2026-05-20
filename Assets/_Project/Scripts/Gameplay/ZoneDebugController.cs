@@ -10,6 +10,7 @@ namespace VertigoWheel.Gameplay
         [SerializeField, HideInInspector] private WheelView wheelView;
         [SerializeField, HideInInspector] private WheelSkinView wheelSkinView;
         [SerializeField, HideInInspector] private ExitButtonView exitButtonView;
+        [SerializeField, HideInInspector] private ExitConfirmPanelView exitConfirmPanelView;
         [SerializeField, HideInInspector] private RewardPanelView rewardPanelView;
         [SerializeField, HideInInspector] private GameOverPanelView gameOverPanelView;
         [SerializeField, HideInInspector] private WheelSpinner wheelSpinner;
@@ -39,6 +40,17 @@ namespace VertigoWheel.Gameplay
                 gameOverPanelView.ReviveClicked += ContinueAfterRevive;
             }
 
+            if (exitButtonView != null)
+            {
+                exitButtonView.Clicked += ShowExitConfirmPanel;
+            }
+
+            if (exitConfirmPanelView != null)
+            {
+                exitConfirmPanelView.CollectClicked += CollectRewardsAndRestart;
+                exitConfirmPanelView.GoBackClicked += HideExitConfirmPanel;
+            }
+
             Refresh();
         }
 
@@ -54,6 +66,17 @@ namespace VertigoWheel.Gameplay
             {
                 gameOverPanelView.GiveUpClicked -= RestartGame;
                 gameOverPanelView.ReviveClicked -= ContinueAfterRevive;
+            }
+
+            if (exitButtonView != null)
+            {
+                exitButtonView.Clicked -= ShowExitConfirmPanel;
+            }
+
+            if (exitConfirmPanelView != null)
+            {
+                exitConfirmPanelView.CollectClicked -= CollectRewardsAndRestart;
+                exitConfirmPanelView.GoBackClicked -= HideExitConfirmPanel;
             }
         }
 
@@ -83,6 +106,16 @@ namespace VertigoWheel.Gameplay
             if (exitButtonView == null)
             {
                 exitButtonView = GetComponentInChildren<ExitButtonView>(true);
+            }
+
+            if (exitConfirmPanelView == null)
+            {
+                exitConfirmPanelView = GetComponentInChildren<ExitConfirmPanelView>(true);
+            }
+
+            if (exitConfirmPanelView == null)
+            {
+                exitConfirmPanelView = FindObjectOfType<ExitConfirmPanelView>(true);
             }
 
             if (rewardPanelView == null)
@@ -225,6 +258,11 @@ namespace VertigoWheel.Gameplay
                 gameOverPanelView.Hide();
             }
 
+            if (exitConfirmPanelView != null)
+            {
+                exitConfirmPanelView.Hide();
+            }
+
             if (exitButtonView != null)
             {
                 exitButtonView.SetVisible(true);
@@ -237,6 +275,45 @@ namespace VertigoWheel.Gameplay
             }
 
             Refresh();
+        }
+
+        private void ShowExitConfirmPanel()
+        {
+            if (wheelSpinner != null && wheelSpinner.IsSpinning)
+            {
+                return;
+            }
+
+            ZoneType zoneType = zoneService != null ? zoneService.GetZoneType(currentZone) : ZoneType.Normal;
+            if (zoneType != ZoneType.Safe && zoneType != ZoneType.Super)
+            {
+                return;
+            }
+
+            if (exitConfirmPanelView == null)
+            {
+                AutoWire();
+            }
+
+            if (exitConfirmPanelView != null)
+            {
+                exitConfirmPanelView.Show();
+            }
+        }
+
+        private void HideExitConfirmPanel()
+        {
+            if (exitConfirmPanelView != null)
+            {
+                exitConfirmPanelView.Hide();
+            }
+
+            Refresh();
+        }
+
+        private void CollectRewardsAndRestart()
+        {
+            RestartGame();
         }
 
         private void ContinueAfterRevive()

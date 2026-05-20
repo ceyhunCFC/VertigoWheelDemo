@@ -8,6 +8,22 @@ namespace VertigoWheel.UI
         [Header("References")]
         [SerializeField, HideInInspector] private Button exitButton;
 
+        public event System.Action Clicked;
+
+        private void Awake()
+        {
+            AutoWire();
+            BindButton();
+        }
+
+        private void OnDestroy()
+        {
+            if (exitButton != null)
+            {
+                exitButton.onClick.RemoveListener(OnClicked);
+            }
+        }
+
         private void OnValidate()
         {
             AutoWire();
@@ -38,6 +54,22 @@ namespace VertigoWheel.UI
         public void SetVisible(bool isVisible)
         {
             gameObject.SetActive(isVisible);
+        }
+
+        private void BindButton()
+        {
+            if (exitButton == null)
+            {
+                return;
+            }
+
+            exitButton.onClick.RemoveListener(OnClicked);
+            exitButton.onClick.AddListener(OnClicked);
+        }
+
+        private void OnClicked()
+        {
+            Clicked?.Invoke();
         }
 
         private Button FindButton(string objectName)
