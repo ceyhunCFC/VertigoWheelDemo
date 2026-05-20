@@ -32,8 +32,14 @@ namespace VertigoWheel.UI
 
         public void ShowReward(RewardStack stack, int previousAmount, RectTransform sourceIconTransform)
         {
+            ShowReward(stack, previousAmount, sourceIconTransform, null);
+        }
+
+        public void ShowReward(RewardStack stack, int previousAmount, RectTransform sourceIconTransform, TweenCallback onComplete)
+        {
             if (stack == null || stack.Reward == null)
             {
+                onComplete?.Invoke();
                 return;
             }
 
@@ -47,11 +53,13 @@ namespace VertigoWheel.UI
                 PlayFlyAnimation(stack.Reward, sourceIconTransform, itemView.IconTransform, () =>
                 {
                     itemView.AnimateAmount(previousAmount, stack.Amount);
+                    onComplete?.Invoke();
                 });
             }
             else
             {
                 itemView.AnimateAmount(previousAmount, stack.Amount);
+                onComplete?.Invoke();
             }
         }
 

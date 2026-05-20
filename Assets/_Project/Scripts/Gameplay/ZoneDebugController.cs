@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using VertigoWheel.UI;
 
@@ -16,13 +17,21 @@ namespace VertigoWheel.Gameplay
         [SerializeField, HideInInspector] private GameOverPanelView gameOverPanelView;
         [SerializeField, HideInInspector] private WheelSpinner wheelSpinner;
         [SerializeField, HideInInspector] private ZoneBarView zoneBarView;
+        [SerializeField, HideInInspector] private RectTransform wheelContainer;
 
         [Header("Zone Settings")]
         [SerializeField] private ZoneConfigSO zoneConfig;
         [SerializeField] private int currentZone = 1;
 
+        [Header("Wheel Transition")]
+        [SerializeField, Min(0f)] private float wheelTransitionDistance = 900f;
+        [SerializeField, Min(0f)] private float wheelExitDuration = 0.28f;
+        [SerializeField, Min(0f)] private float wheelEnterDuration = 0.32f;
+
         private ZoneService zoneService;
         private readonly RewardInventory rewardInventory = new RewardInventory();
+        private Sequence wheelTransitionSequence;
+        private bool isWheelTransitioning;
 
         private void Awake()
         {
@@ -79,6 +88,8 @@ namespace VertigoWheel.Gameplay
                 exitConfirmPanelView.CollectClicked -= CollectRewardsAndRestart;
                 exitConfirmPanelView.GoBackClicked -= HideExitConfirmPanel;
             }
+
+            wheelTransitionSequence?.Kill();
         }
 
         private void OnValidate()
@@ -102,6 +113,11 @@ namespace VertigoWheel.Gameplay
             if (wheelView == null)
             {
                 wheelView = GetComponentInChildren<WheelView>(true);
+            }
+
+            if (wheelContainer == null && wheelView != null)
+            {
+                wheelContainer = wheelView.transform as RectTransform;
             }
 
             if (exitButtonView == null)
@@ -164,25 +180,28 @@ namespace VertigoWheel.Gameplay
 
             ZoneType zoneType = zoneService.GetZoneType(currentZone);
 
-            if (zoneHudView != null)
+            ApplyHud();
+            ApplyWheelZone(zoneType);
+            ApplyExitButton(zoneType);
+        }
+
+        private void ApplyHud()
+        {
+            if (zoneHudView == null)
             {
-                zoneHudView.SetNextSafeZone(zoneService.GetNextSafeZone(currentZone));
-                zoneHudView.SetNextSuperZone(zoneService.GetNextSuperZone(currentZone));
+                return;
             }
 
-            if (wheelView != null)
-            {
-                wheelView.SetZoneType(zoneType);
-            }
-            else if (wheelSkinView != null)
-            {
-                wheelSkinView.SetZoneType(zoneType);
-            }
+            zoneHudView.SetNextSafeZone(zoneService.GetNextSafeZone(currentZone));
+            zoneHudView.SetNextSuperZone(zoneService.GetNextSuperZone(currentZone));
+        }
 
+        private void ApplyExitButton(ZoneType zoneType)
+        {
             if (exitButtonView != null)
             {
                 bool isSafeExitZone = zoneType == ZoneType.Safe || zoneType == ZoneType.Super;
-                bool isWheelIdle = wheelSpinner == null || !wheelSpinner.IsSpinning;
+                bool isWheelIdle = (wheelSpinner == null || !wheelSpinner.IsSpinning) && !isWheelTransitioning;
                 exitButtonView.SetInteractable(isSafeExitZone && isWheelIdle);
             }
         }
@@ -220,10 +239,16 @@ namespace VertigoWheel.Gameplay
                 RewardStack stack = rewardInventory.AddReward(slotData.Reward, slotData.Amount, out int previousAmount);
                 if (rewardPanelView != null)
                 {
-                    rewardPanelView.ShowReward(stack, previousAmount, spinResult.SourceIconTransform);
+                    rewardPanelView.ShowReward(stack, previousAmount, spinResult.SourceIconTransform, AdvanceToNextZone);
+                    return;
                 }
             }
 
+            AdvanceToNextZone();
+        }
+
+        private void AdvanceToNextZone()
+        {
             currentZone++;
 
             if (zoneBarView != null)
@@ -231,7 +256,7 @@ namespace VertigoWheel.Gameplay
                 zoneBarView.Advance();
             }
 
-            Refresh();
+            PlayWheelZoneTransition();
         }
 
         private ZoneService CreateZoneService()
@@ -291,6 +316,78 @@ namespace VertigoWheel.Gameplay
             }
 
             Refresh();
+        }
+
+        private void ApplyWheelZone(ZoneType zoneType)
+        {
+            if (wheelView != null)
+            {
+                wheelView.SetZoneType(zoneType);
+            }
+            else if (wheelSkinView != null)
+            {
+                wheelSkinView.SetZoneType(zoneType);
+            }
+        }
+
+        private void PlayWheelZoneTransition()
+        {
+            if (zoneService == null)
+            {
+                zoneService = CreateZoneService();
+            }
+
+            ZoneType nextZoneType = zoneService.GetZoneType(currentZone);
+
+            if (wheelContainer == null)
+            {
+                AutoWire();
+            }
+
+            if (wheelContainer == null)
+            {
+                Refresh();
+                return;
+            }
+
+            wheelTransitionSequence?.Kill();
+            isWheelTransitioning = true;
+            if (wheelSpinner != null)
+            {
+                wheelSpinner.SetInputEnabled(false);
+            }
+
+            ApplyHud();
+            ApplyExitButton(nextZoneType);
+
+            Vector2 originalPosition = wheelContainer.anchoredPosition;
+            Vector2 exitPosition = originalPosition + Vector2.down * wheelTransitionDistance;
+            Vector2 enterPosition = originalPosition + Vector2.down * wheelTransitionDistance;
+
+            wheelTransitionSequence = DOTween.Sequence();
+            wheelTransitionSequence.Append(wheelContainer.DOAnchorPos(exitPosition, wheelExitDuration).SetEase(Ease.InCubic));
+            wheelTransitionSequence.AppendCallback(() =>
+            {
+                ApplyWheelZone(nextZoneType);
+
+                if (wheelSpinner != null)
+                {
+                    wheelSpinner.ResetWheelRotation();
+                }
+
+                wheelContainer.anchoredPosition = enterPosition;
+            });
+            wheelTransitionSequence.Append(wheelContainer.DOAnchorPos(originalPosition, wheelEnterDuration).SetEase(Ease.OutCubic));
+            wheelTransitionSequence.OnComplete(() =>
+            {
+                isWheelTransitioning = false;
+                if (wheelSpinner != null)
+                {
+                    wheelSpinner.SetInputEnabled(true);
+                }
+
+                Refresh();
+            });
         }
 
         private void ShowExitConfirmPanel()

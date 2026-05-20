@@ -18,8 +18,10 @@ namespace VertigoWheel.UI
         [SerializeField] private int minFullTurns = 4;
         [SerializeField] private int maxFullTurns = 7;
         [SerializeField] private float topPointerAngleOffset;
+        [SerializeField] private bool spinClockwise = true;
 
         private bool isSpinning;
+        private bool isInputEnabled = true;
 
         public bool IsSpinning => isSpinning;
 
@@ -62,7 +64,7 @@ namespace VertigoWheel.UI
 
         public void SpinRandom()
         {
-            if (isSpinning || wheelRotator == null || spinButton == null || wheelView == null)
+            if (!isInputEnabled || isSpinning || wheelRotator == null || spinButton == null || wheelView == null)
             {
                 return;
             }
@@ -80,7 +82,7 @@ namespace VertigoWheel.UI
 
         public void SpinToSlot(int selectedSlotIndex)
         {
-            if (isSpinning || wheelRotator == null || spinButton == null || wheelView == null)
+            if (!isInputEnabled || isSpinning || wheelRotator == null || spinButton == null || wheelView == null)
             {
                 return;
             }
@@ -98,24 +100,78 @@ namespace VertigoWheel.UI
                 return;
             }
 
+            if (!wheelView.TryGetSlotAngleFromTop(selectedSlotIndex, out float selectedSlotAngle))
+            {
+                return;
+            }
+
+            selectedSlotAngle += topPointerAngleOffset;
+
             isSpinning = true;
             spinButton.interactable = false;
             SpinStarted?.Invoke();
 
-            float anglePerSlot = 360f / slotCount;
-            float selectedSlotAngle = (selectedSlotIndex * anglePerSlot) + topPointerAngleOffset;
             int fullTurns = UnityEngine.Random.Range(minFullTurns, maxFullTurns + 1);
-            float targetRotation = (fullTurns * 360f) + selectedSlotAngle;
+            float finalRotation = CalculateTargetRotation(selectedSlotAngle, fullTurns);
 
             wheelRotator
-                .DORotate(new Vector3(0f, 0f, -targetRotation), spinDuration, RotateMode.FastBeyond360)
+                .DORotate(new Vector3(0f, 0f, finalRotation), spinDuration, RotateMode.FastBeyond360)
                 .SetEase(Ease.OutCubic)
                 .OnComplete(() =>
                 {
                     isSpinning = false;
-                    spinButton.interactable = true;
+                    spinButton.interactable = isInputEnabled;
                     SpinCompleted?.Invoke(selectedResult);
                 });
+        }
+
+        public void SetInputEnabled(bool isEnabled)
+        {
+            isInputEnabled = isEnabled;
+            if (spinButton != null)
+            {
+                spinButton.interactable = isInputEnabled && !isSpinning;
+            }
+        }
+
+        public void ResetWheelRotation()
+        {
+            if (wheelRotator != null)
+            {
+                wheelRotator.DOKill();
+                wheelRotator.localRotation = Quaternion.identity;
+            }
+        }
+
+        private float CalculateTargetRotation(float slotAngleFromTop, int fullTurns)
+        {
+            float currentRotation = NormalizeAngle(wheelRotator.localEulerAngles.z);
+            float targetRotation = NormalizeAngle(slotAngleFromTop);
+            float fullTurnRotation = Mathf.Max(0, fullTurns) * 360f;
+
+            if (spinClockwise)
+            {
+                float clockwiseDistance = Mathf.Repeat(currentRotation - targetRotation, 360f);
+                if (clockwiseDistance <= Mathf.Epsilon)
+                {
+                    clockwiseDistance = 360f;
+                }
+
+                return currentRotation - fullTurnRotation - clockwiseDistance;
+            }
+
+            float counterClockwiseDistance = Mathf.Repeat(targetRotation - currentRotation, 360f);
+            if (counterClockwiseDistance <= Mathf.Epsilon)
+            {
+                counterClockwiseDistance = 360f;
+            }
+
+            return currentRotation + fullTurnRotation + counterClockwiseDistance;
+        }
+
+        private float NormalizeAngle(float angle)
+        {
+            return Mathf.Repeat(angle, 360f);
         }
 
         private void BindButton()

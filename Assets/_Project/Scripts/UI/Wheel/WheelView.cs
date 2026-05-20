@@ -58,6 +58,30 @@ namespace VertigoWheel.UI
             return true;
         }
 
+        public bool TryGetSlotAngleFromTop(int slotIndex, out float angle)
+        {
+            angle = 0f;
+            if (slotViews == null || slotIndex < 0 || slotIndex >= slotViews.Length || slotViews[slotIndex] == null)
+            {
+                return false;
+            }
+
+            RectTransform slotTransform = slotViews[slotIndex].transform as RectTransform;
+            if (slotTransform == null)
+            {
+                return false;
+            }
+
+            Vector2 localPosition = slotTransform.anchoredPosition;
+            if (localPosition.sqrMagnitude <= Mathf.Epsilon)
+            {
+                return false;
+            }
+
+            angle = Mathf.Atan2(localPosition.x, localPosition.y) * Mathf.Rad2Deg;
+            return true;
+        }
+
         public void ShuffleSlots()
         {
             if (activeSlots == null || activeSlots.Length == 0) return;
