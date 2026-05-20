@@ -10,6 +10,7 @@ namespace VertigoWheel.Gameplay
         [SerializeField, HideInInspector] private WheelView wheelView;
         [SerializeField, HideInInspector] private WheelSkinView wheelSkinView;
         [SerializeField, HideInInspector] private ExitButtonView exitButtonView;
+        [SerializeField, HideInInspector] private RewardPanelView rewardPanelView;
         [SerializeField, HideInInspector] private WheelSpinner wheelSpinner;
         [SerializeField, HideInInspector] private ZoneBarView zoneBarView;
 
@@ -18,6 +19,7 @@ namespace VertigoWheel.Gameplay
         [SerializeField] private int currentZone = 1;
 
         private ZoneService zoneService;
+        private readonly RewardInventory rewardInventory = new RewardInventory();
 
         private void Awake()
         {
@@ -70,6 +72,11 @@ namespace VertigoWheel.Gameplay
                 exitButtonView = GetComponentInChildren<ExitButtonView>(true);
             }
 
+            if (rewardPanelView == null)
+            {
+                rewardPanelView = GetComponentInChildren<RewardPanelView>(true);
+            }
+
             if (wheelSpinner == null)
             {
                 wheelSpinner = GetComponentInChildren<WheelSpinner>(true);
@@ -113,13 +120,29 @@ namespace VertigoWheel.Gameplay
             }
         }
 
-        private void OnSpinCompleted(WheelSlotData slotData)
+        private void OnSpinCompleted(WheelSpinResult spinResult)
         {
+            WheelSlotData slotData = spinResult.SlotData;
             if (slotData != null && slotData.Reward != null && slotData.Reward.RewardType == RewardType.Death)
             {
                 Debug.Log("[ZoneDebugController] Death selected. Game over.");
+                rewardInventory.Clear();
+                if (rewardPanelView != null)
+                {
+                    rewardPanelView.Clear();
+                }
+
                 // TODO: game over flow
                 return;
+            }
+
+            if (slotData != null && slotData.Reward != null)
+            {
+                RewardStack stack = rewardInventory.AddReward(slotData.Reward, slotData.Amount, out int previousAmount);
+                if (rewardPanelView != null)
+                {
+                    rewardPanelView.ShowReward(stack, previousAmount, spinResult.SourceIconTransform);
+                }
             }
 
             currentZone++;

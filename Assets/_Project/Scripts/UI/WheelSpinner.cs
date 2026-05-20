@@ -24,7 +24,7 @@ namespace VertigoWheel.UI
         public bool IsSpinning => isSpinning;
 
         public event Action SpinStarted;
-        public event Action<WheelSlotData> SpinCompleted;
+        public event Action<WheelSpinResult> SpinCompleted;
 
         private void Awake()
         {
@@ -34,10 +34,14 @@ namespace VertigoWheel.UI
         private void OnDestroy()
         {
             if (wheelRotator != null)
+            {
                 wheelRotator.DOKill();
+            }
 
             if (spinButton != null)
+            {
                 spinButton.onClick.RemoveListener(SpinRandom);
+            }
         }
 
         private void OnValidate()
@@ -58,10 +62,16 @@ namespace VertigoWheel.UI
 
         public void SpinRandom()
         {
-            if (isSpinning || wheelView == null) return;
+            if (isSpinning || wheelRotator == null || spinButton == null || wheelView == null)
+            {
+                return;
+            }
 
             int slotCount = wheelView.SlotCount;
-            if (slotCount <= 0) return;
+            if (slotCount <= 0)
+            {
+                return;
+            }
 
             wheelView.ShuffleSlots();
             int selectedSlotIndex = UnityEngine.Random.Range(0, slotCount);
@@ -70,12 +80,23 @@ namespace VertigoWheel.UI
 
         public void SpinToSlot(int selectedSlotIndex)
         {
-            if (isSpinning || wheelRotator == null || spinButton == null || wheelView == null) return;
+            if (isSpinning || wheelRotator == null || spinButton == null || wheelView == null)
+            {
+                return;
+            }
 
             int slotCount = wheelView.SlotCount;
-            if (slotCount <= 0) return;
+            if (slotCount <= 0)
+            {
+                return;
+            }
 
             selectedSlotIndex = Mathf.Clamp(selectedSlotIndex, 0, slotCount - 1);
+
+            if (!wheelView.TryGetSpinResult(selectedSlotIndex, out WheelSpinResult selectedResult))
+            {
+                return;
+            }
 
             isSpinning = true;
             spinButton.interactable = false;
@@ -93,9 +114,7 @@ namespace VertigoWheel.UI
                 {
                     isSpinning = false;
                     spinButton.interactable = true;
-
-                    wheelView.TryGetSlotData(selectedSlotIndex, out WheelSlotData slotData);
-                    SpinCompleted?.Invoke(slotData);
+                    SpinCompleted?.Invoke(selectedResult);
                 });
         }
 

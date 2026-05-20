@@ -40,6 +40,24 @@ namespace VertigoWheel.UI
             return slotData != null && slotData.Reward != null;
         }
 
+        public bool TryGetSpinResult(int slotIndex, out WheelSpinResult result)
+        {
+            result = default;
+            if (!TryGetSlotData(slotIndex, out WheelSlotData slotData))
+            {
+                return false;
+            }
+
+            RectTransform sourceIconTransform = null;
+            if (slotViews != null && slotIndex >= 0 && slotIndex < slotViews.Length && slotViews[slotIndex] != null)
+            {
+                sourceIconTransform = slotViews[slotIndex].RewardIconTransform;
+            }
+
+            result = new WheelSpinResult(slotData, sourceIconTransform);
+            return true;
+        }
+
         public void ShuffleSlots()
         {
             if (activeSlots == null || activeSlots.Length == 0) return;
@@ -57,6 +75,12 @@ namespace VertigoWheel.UI
 
         private void SetWheelData(WheelDataSO wheelData)
         {
+            if (currentWheelData == wheelData && activeSlots != null)
+            {
+                RefreshSlots();
+                return;
+            }
+
             currentWheelData = wheelData;
             if (currentWheelData == null) return;
 

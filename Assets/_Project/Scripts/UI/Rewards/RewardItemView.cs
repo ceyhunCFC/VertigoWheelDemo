@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,52 +6,64 @@ using VertigoWheel.Gameplay;
 
 namespace VertigoWheel.UI
 {
-    public class WheelSlotView : MonoBehaviour
+    public class RewardItemView : MonoBehaviour
     {
-        [SerializeField, HideInInspector] private Image rewardIconImage;
-        [SerializeField, HideInInspector] private TMP_Text rewardAmountText;
+        [SerializeField] private Image rewardIconImage;
+        [SerializeField] private TMP_Text rewardAmountText;
 
-        public RectTransform RewardIconTransform => rewardIconImage != null ? rewardIconImage.rectTransform : null;
+        public RectTransform IconTransform => rewardIconImage != null ? rewardIconImage.rectTransform : transform as RectTransform;
 
         private void OnValidate()
         {
             AutoWire();
         }
 
-        public void SetData(WheelSlotData slotData)
+        public void SetData(RewardDataSO reward, int amount)
         {
-            if (slotData == null || slotData.Reward == null)
-            {
-                SetVisible(false);
-                return;
-            }
-
-            SetVisible(true);
+            gameObject.SetActive(true);
+            AutoWire();
 
             if (rewardIconImage != null)
             {
-                rewardIconImage.sprite = slotData.Reward.Icon;
+                rewardIconImage.sprite = reward != null ? reward.Icon : null;
                 rewardIconImage.preserveAspect = true;
                 rewardIconImage.raycastTarget = false;
             }
 
-            if (rewardAmountText != null)
-            {
-                rewardAmountText.enabled = slotData.Reward.RewardType != RewardType.Death;
-                rewardAmountText.text = slotData.Amount.ToString();
-            }
+            SetAmount(amount);
         }
 
-        private void SetVisible(bool isVisible)
+        public void AnimateAmount(int fromAmount, int toAmount)
         {
+            AutoWire();
+            transform.DOKill();
+
             if (rewardIconImage != null)
             {
-                rewardIconImage.enabled = isVisible;
+                rewardIconImage.transform.DOKill();
+                rewardIconImage.transform.DOPunchScale(Vector3.one * 0.18f, 0.25f, 6, 0.6f);
             }
 
+            if (rewardAmountText == null)
+            {
+                return;
+            }
+
+            int displayAmount = fromAmount;
+            DOTween.To(() => displayAmount, value =>
+                {
+                    displayAmount = value;
+                    SetAmount(displayAmount);
+                }, toAmount, 0.45f)
+                .SetEase(Ease.OutCubic)
+                .SetTarget(this);
+        }
+
+        private void SetAmount(int amount)
+        {
             if (rewardAmountText != null)
             {
-                rewardAmountText.enabled = isVisible;
+                rewardAmountText.text = $"x{amount}";
             }
         }
 
