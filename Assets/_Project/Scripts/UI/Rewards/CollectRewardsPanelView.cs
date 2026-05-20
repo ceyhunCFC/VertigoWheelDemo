@@ -35,6 +35,7 @@ namespace VertigoWheel.UI
         private Vector3 iconTargetScale;
         private int currentRewardIndex;
         private bool isAnimating;
+        private bool isAdvanceQueued;
         private float nextAllowedClickTime;
 
         private void Awake()
@@ -80,7 +81,6 @@ namespace VertigoWheel.UI
 
             CacheIconTarget();
             currentRewardIndex = 0;
-            LockClick();
             PlayItem(currentRewardIndex);
         }
 
@@ -94,6 +94,22 @@ namespace VertigoWheel.UI
         {
             if (Time.unscaledTime < nextAllowedClickTime)
             {
+                return;
+            }
+
+            if (isAnimating)
+            {
+                isAdvanceQueued = true;
+                LockClick();
+                if (sequence != null)
+                {
+                    sequence.Complete(true);
+                }
+                else
+                {
+                    UnlockAfterItem();
+                }
+
                 return;
             }
 
@@ -150,7 +166,15 @@ namespace VertigoWheel.UI
         private void UnlockAfterItem()
         {
             isAnimating = false;
-            LockClick();
+
+            if (!isAdvanceQueued)
+            {
+                nextAllowedClickTime = 0f;
+                return;
+            }
+
+            isAdvanceQueued = false;
+            ShowNextItem();
         }
 
         private void LockClick()
@@ -273,6 +297,7 @@ namespace VertigoWheel.UI
         private void KillAnimations()
         {
             isAnimating = false;
+            isAdvanceQueued = false;
             nextAllowedClickTime = 0f;
             sequence?.Kill();
             sequence = null;
