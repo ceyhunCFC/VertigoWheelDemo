@@ -7,6 +7,7 @@ namespace VertigoWheel.Gameplay
     {
         [Header("References")]
         [SerializeField, HideInInspector] private ZoneHudView zoneHudView;
+        [SerializeField, HideInInspector] private WheelView wheelView;
         [SerializeField, HideInInspector] private WheelSkinView wheelSkinView;
         [SerializeField, HideInInspector] private ExitButtonView exitButtonView;
         [SerializeField, HideInInspector] private WheelSpinner wheelSpinner;
@@ -59,6 +60,11 @@ namespace VertigoWheel.Gameplay
                 wheelSkinView = GetComponentInChildren<WheelSkinView>(true);
             }
 
+            if (wheelView == null)
+            {
+                wheelView = GetComponentInChildren<WheelView>(true);
+            }
+
             if (exitButtonView == null)
             {
                 exitButtonView = GetComponentInChildren<ExitButtonView>(true);
@@ -90,7 +96,11 @@ namespace VertigoWheel.Gameplay
                 zoneHudView.SetNextSuperZone(zoneService.GetNextSuperZone(currentZone));
             }
 
-            if (wheelSkinView != null)
+            if (wheelView != null)
+            {
+                wheelView.SetZoneType(zoneType);
+            }
+            else if (wheelSkinView != null)
             {
                 wheelSkinView.SetZoneType(zoneType);
             }
@@ -103,8 +113,15 @@ namespace VertigoWheel.Gameplay
             }
         }
 
-        private void OnSpinCompleted(int selectedSlotIndex)
+        private void OnSpinCompleted(WheelSlotData slotData)
         {
+            if (slotData != null && slotData.Reward != null && slotData.Reward.RewardType == RewardType.Death)
+            {
+                Debug.Log("[ZoneDebugController] Death selected. Game over.");
+                // TODO: game over flow
+                return;
+            }
+
             currentZone++;
 
             if (zoneBarView != null)
