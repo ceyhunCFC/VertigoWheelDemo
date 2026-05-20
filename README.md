@@ -73,3 +73,10 @@ DOTween, `Assets/Plugins/Demigiant/DOTween` altında dahil edilmiştir.
 - Değiştirilebilir UI metin alanları `_value` adlandırmasını kullanır.
 - Gereksiz UI raycast hedefleri devre dışı bırakılmıştır.
 - Çark, ödül ve bölge içeriği, daha kolay iterasyon için ScriptableObject'ler tarafından yönetilmektedir.
+
+## Oyun User IDs
+
+- Critical Strike : User ID = `661855836FA6C7E2` , Nickname = `Ceyhuncfc`
+- Polygun Arena : User ID = `4C74CB5422885F4E` , Nickname = `CeyhunCFC`
+
+
