@@ -36,9 +36,18 @@ namespace VertigoWheel.UI
 
             if (rewardAmountText != null)
             {
+                ConfigureAmountText(rewardAmountText);
                 rewardAmountText.enabled = slotData.Reward.RewardType != RewardType.Death;
-                rewardAmountText.text = slotData.Amount.ToString();
+                rewardAmountText.text = $"x{slotData.Amount}";
             }
+        }
+
+        private void ConfigureAmountText(TMP_Text amountText)
+        {
+            amountText.enableWordWrapping = false;
+            amountText.overflowMode = TextOverflowModes.Overflow;
+            amountText.enableAutoSizing = true;
+            amountText.fontSizeMin = 14f;
         }
 
         private void SetVisible(bool isVisible)

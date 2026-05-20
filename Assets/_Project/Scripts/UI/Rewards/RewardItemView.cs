@@ -63,8 +63,18 @@ namespace VertigoWheel.UI
         {
             if (rewardAmountText != null)
             {
+                ConfigureAmountText(rewardAmountText);
                 rewardAmountText.text = $"x{amount}";
             }
+        }
+
+        private void ConfigureAmountText(TMP_Text amountText)
+        {
+            amountText.enableWordWrapping = false;
+            amountText.overflowMode = TextOverflowModes.Overflow;
+            amountText.enableAutoSizing = true;
+            amountText.fontSizeMin = 18f;
+            amountText.fontSizeMax = 36f;
         }
 
         private void AutoWire()

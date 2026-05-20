@@ -1750,7 +1750,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3583191450419698765, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
       propertyPath: m_Name
-      value: ui_slot_wheel_reward (6)
+      value: ui_slot_wheel_reward_6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
@@ -2031,7 +2031,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3583191450419698765, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
       propertyPath: m_Name
-      value: ui_slot_wheel_reward (1)
+      value: ui_slot_wheel_reward_0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
@@ -2133,7 +2133,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3583191450419698765, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
       propertyPath: m_Name
-      value: ui_slot_wheel_reward (2)
+      value: ui_slot_wheel_reward_2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
@@ -2432,7 +2432,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3583191450419698765, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
       propertyPath: m_Name
-      value: ui_slot_wheel_reward (7)
+      value: ui_slot_wheel_reward_7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
@@ -4340,7 +4340,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3583191450419698765, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
       propertyPath: m_Name
-      value: ui_slot_wheel_reward (5)
+      value: ui_slot_wheel_reward_5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
@@ -9730,7 +9730,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3583191450419698765, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
       propertyPath: m_Name
-      value: ui_slot_wheel_reward (3)
+      value: ui_slot_wheel_reward_3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
@@ -10176,7 +10176,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3583191450419698765, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
       propertyPath: m_Name
-      value: ui_slot_wheel_reward (4)
+      value: ui_slot_wheel_reward_4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
@@ -12957,7 +12957,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3583191450419698765, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}
       propertyPath: m_Name
-      value: ui_slot_wheel_reward
+      value: ui_slot_wheel_reward_1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3cd7b314e666e4430a253c1de4061ea7, type: 3}

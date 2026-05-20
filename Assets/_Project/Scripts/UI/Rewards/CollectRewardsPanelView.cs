@@ -23,6 +23,7 @@ namespace VertigoWheel.UI
         [SerializeField] private float iconMoveDuration = 0.45f;
         [SerializeField] private float itemHoldDuration = 0.65f;
         [SerializeField] private float lightRotateDuration = 8f;
+        [SerializeField, Min(0f)] private float clickCooldown = 0.25f;
         [SerializeField] private Vector2 chestSpawnOffset = new Vector2(0f, 45f);
 
         private readonly List<RewardStack> rewardQueue = new List<RewardStack>();
@@ -34,6 +35,7 @@ namespace VertigoWheel.UI
         private Vector3 iconTargetScale;
         private int currentRewardIndex;
         private bool isAnimating;
+        private float nextAllowedClickTime;
 
         private void Awake()
         {
@@ -78,6 +80,7 @@ namespace VertigoWheel.UI
 
             CacheIconTarget();
             currentRewardIndex = 0;
+            LockClick();
             PlayItem(currentRewardIndex);
         }
 
@@ -89,6 +92,11 @@ namespace VertigoWheel.UI
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            if (Time.unscaledTime < nextAllowedClickTime)
+            {
+                return;
+            }
+
             ShowNextItem();
         }
 
@@ -99,6 +107,7 @@ namespace VertigoWheel.UI
                 return;
             }
 
+            LockClick();
             currentRewardIndex++;
             if (currentRewardIndex >= rewardQueue.Count)
             {
@@ -127,7 +136,7 @@ namespace VertigoWheel.UI
             {
                 sequence = DOTween.Sequence();
                 sequence.AppendInterval(itemHoldDuration);
-                sequence.AppendCallback(() => isAnimating = false);
+                sequence.AppendCallback(UnlockAfterItem);
                 return;
             }
 
@@ -135,7 +144,18 @@ namespace VertigoWheel.UI
             sequence.Append(rewardIconTransform.DOAnchorPos(iconTargetPosition, iconMoveDuration).SetEase(Ease.OutBack));
             sequence.Join(rewardIconTransform.DOScale(iconTargetScale, iconMoveDuration).SetEase(Ease.OutBack));
             sequence.AppendInterval(itemHoldDuration);
-            sequence.AppendCallback(() => isAnimating = false);
+            sequence.AppendCallback(UnlockAfterItem);
+        }
+
+        private void UnlockAfterItem()
+        {
+            isAnimating = false;
+            LockClick();
+        }
+
+        private void LockClick()
+        {
+            nextAllowedClickTime = Time.unscaledTime + clickCooldown;
         }
 
         private void SetReward(RewardStack stack)
@@ -253,6 +273,7 @@ namespace VertigoWheel.UI
         private void KillAnimations()
         {
             isAnimating = false;
+            nextAllowedClickTime = 0f;
             sequence?.Kill();
             sequence = null;
             lightTween?.Kill();
