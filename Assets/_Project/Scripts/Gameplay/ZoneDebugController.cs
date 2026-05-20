@@ -208,6 +208,11 @@ namespace VertigoWheel.Gameplay
 
         private void OnSpinCompleted(WheelSpinResult spinResult)
         {
+            if (wheelSpinner != null)
+            {
+                wheelSpinner.SetInputEnabled(false);
+            }
+
             WheelSlotData slotData = spinResult.SlotData;
             if (IsDeathReward(slotData))
             {
@@ -307,6 +312,11 @@ namespace VertigoWheel.Gameplay
             if (exitButtonView != null)
             {
                 exitButtonView.SetVisible(true);
+            }
+
+            if (wheelSpinner != null)
+            {
+                wheelSpinner.SetInputEnabled(true);
             }
 
             currentZone = 1;
@@ -456,6 +466,11 @@ namespace VertigoWheel.Gameplay
             if (exitButtonView != null)
             {
                 exitButtonView.SetVisible(true);
+            }
+
+            if (wheelSpinner != null)
+            {
+                wheelSpinner.SetInputEnabled(true);
             }
 
             Refresh();
