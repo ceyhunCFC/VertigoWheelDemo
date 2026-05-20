@@ -86,7 +86,6 @@ namespace VertigoWheel.Gameplay
 
             if (zoneHudView != null)
             {
-                zoneHudView.SetCurrentZone(currentZone);
                 zoneHudView.SetNextSafeZone(zoneService.GetNextSafeZone(currentZone));
                 zoneHudView.SetNextSuperZone(zoneService.GetNextSuperZone(currentZone));
             }

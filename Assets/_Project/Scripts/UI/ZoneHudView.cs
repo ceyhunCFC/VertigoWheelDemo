@@ -5,9 +5,6 @@ namespace VertigoWheel.UI
 {
     public class ZoneHudView : MonoBehaviour
     {
-        [Header("Zone Bar")]
-        [SerializeField, HideInInspector] private TMP_Text currentZoneText;
-
         [Header("Counters")]
         [SerializeField, HideInInspector] private TMP_Text safeZoneCounterText;
         [SerializeField, HideInInspector] private TMP_Text superZoneCounterText;
@@ -20,17 +17,8 @@ namespace VertigoWheel.UI
         [ContextMenu("Auto Wire")]
         private void AutoWire()
         {
-            currentZoneText = FindText("ui_text_zone_current_value");
             safeZoneCounterText = FindText("ui_text_safe_zone_value");
             superZoneCounterText = FindText("ui_text_super_zone_value");
-        }
-
-        public void SetCurrentZone(int zone)
-        {
-            if (currentZoneText != null)
-            {
-                currentZoneText.text = zone.ToString();
-            }
         }
 
         public void SetNextSafeZone(int zone)
